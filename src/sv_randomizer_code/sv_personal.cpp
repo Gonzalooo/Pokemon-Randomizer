@@ -338,12 +338,12 @@ void svPersonal::fixEvolution(json& pokemon, int species, int form){
     case 25:
         if(form == 0){
             fixEvo(pokemon, 26, 0, 36, 32, 1, true); // Raichu
-            fixEvo(pokemon, 26, 0, 36, 33, 1, true); // Raichu - Alolan
+            fixEvo(pokemon, 26, 1, 36, 33, 1, true); // Raichu - Alolan
         }
         break;
     case 61: // Poliwhirl
-        fixEvo(pokemon, 186, 0, 36, 4, 1, false); // Politoed
-        fixEvo(pokemon, 62, 0, 36, 4, 0, true); // Poliwrath
+        fixEvo(pokemon, 186, 0, 36, 33, 1, false); // Politoed
+        fixEvo(pokemon, 62, 0, 36, 32, 0, true); // Poliwrath
         break;
     case 64: // Kadabra
         fixEvo(pokemon, 65, 0, 36, 4, 0, false); // Alakazam
@@ -355,8 +355,13 @@ void svPersonal::fixEvolution(json& pokemon, int species, int form){
         fixEvo(pokemon, 76, form, 36, 4, 0, false); // Golem - Kanto/Alola
         break;
     case 79: // Slowpoke
-        fixEvo(pokemon, 80, 0, 36, 32, 0, false); // Slowbro - in morning
-        fixEvo(pokemon, 199, 0, 36, 33, 1, false); // Slowking - at night
+        if(form == 0){
+            fixEvo(pokemon, 80, 0, 36, 32, 0, false); // Slowbro - in morning
+            fixEvo(pokemon, 199, 0, 36, 33, 1, false); // Slowking - at night
+        }else if(form == 1){ // Added level up option for Galarian-Slowbro
+            fixEvo(pokemon, 80, 2, 36, 32, 1, true); // Slowbro - in morning
+            fixEvo(pokemon, 199, 1, 36, 33, 1, true); // Slowking - at night
+        }
         break;
     case 93: // Haunter
         fixEvo(pokemon, 94, 0, 36, 4, 0, false); // Gengar
@@ -409,7 +414,7 @@ void svPersonal::fixEvolution(json& pokemon, int species, int form){
         fixEvo(pokemon, 350, 0, 36, 4, 1, false); // Milotic
         break;
     case 356: // Dusclops
-        fixEvo(pokemon, 477, 0, 36, 4, 1, false); // Dusknoir
+        fixEvo(pokemon, 477, 0, 36, 4, 0, false); // Dusknoir
         break;
     case 366: // Clamperl
         fixEvo(pokemon, 368, 0, 36, 32, 0, false); // Gorebyss
@@ -423,11 +428,11 @@ void svPersonal::fixEvolution(json& pokemon, int species, int form){
         fixEvo(pokemon, 526, 0, 36, 4, 1, false); // Milotic
         break;
     case 533: // Gurdurr
-        fixEvo(pokemon, 534, 0, 36, 4, 1, false); // Conkeldurr
+        fixEvo(pokemon, 534, 0, 36, 4, 0, false); // Conkeldurr
         break;
     case 548: // Petilil
-        fixEvo(pokemon, 548, 0, 36, 32, 0, true); // Lilligant
-        fixEvo(pokemon, 548, 1, 36, 33, 0, true); // Lilligant - Hisui
+        fixEvo(pokemon, 549, 0, 36, 32, 0, true); // Lilligant
+        fixEvo(pokemon, 549, 1, 36, 33, 0, true); // Lilligant - Hisui
         break;
     case 588: // Karrablast
         fixEvo(pokemon, 589, 0, 36, 4, 1, false); // Escavalier
@@ -453,7 +458,7 @@ void svPersonal::fixEvolution(json& pokemon, int species, int form){
         fixEvo(pokemon, 705, 1, 36, 33, 0, true); // Sliggo - Hisui
         break;
     case 708: // Phantump
-        fixEvo(pokemon, 709, 0, 36, 4, 1, false); // Trevenant
+        fixEvo(pokemon, 709, 0, 36, 4, 0, false); // Trevenant
         break;
     case 710: // Pumpkaboo
         fixEvo(pokemon, 711, form, 36, 4, 1, false); // Gourgeist

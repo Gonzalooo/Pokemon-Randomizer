@@ -3,8 +3,16 @@
 QList<QString> choosenBiomes = {};
 
 QString svWilds::pickRandomBiome(){
-    QList<QString> possible_biomes = {"GRASS", "FOREST", "SWAMP", "LAKE", "TOWN", "MOUNTAIN", "BAMBOO", "MINE", "CAVE", "OLIVE",
+
+    QList<QString> possible_biomes;
+
+    if(currentRegion == "Blueberry"){
+        possible_biomes = {"GRASS", "FOREST", "SWAMP", "LAKE", "TOWN", "MOUNTAIN", "BAMBOO", "MINE", "CAVE", "OLIVE",
                                           "UNDERGROUND", "RIVER", "ROCKY", "BEACH", "SNOW", "OSEAN", "RUINS", "FLOWER", "DENKI_ISHI"};
+    }else{
+        possible_biomes = {"GRASS", "FOREST", "SWAMP", "LAKE", "TOWN", "MOUNTAIN", "BAMBOO", "MINE", "CAVE", "OLIVE",
+                           "UNDERGROUND", "RIVER", "ROCKY", "BEACH", "SNOW", "OSEAN", "RUINS", "FLOWER"};
+    }
 
     QString choice = possible_biomes[localRand->bounded(0, possible_biomes.size())];
 
@@ -51,7 +59,7 @@ QString svWilds::generateAreaList(){
         currentAreas.append(num);
 
         areaList = areaList + QString::number(num);
-        if(i != 9){
+        if(i != maxChecks-1){
             areaList = areaList +",";
         }
     }
