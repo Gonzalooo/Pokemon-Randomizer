@@ -10,6 +10,8 @@ public:
     ~svFixed();
 
     json fixedEncounters;
+    QRandomGenerator* localRand;
+
     bool randomizeFixedEncounters = false;
     bool similarBST = false;
     bool keepSameTera = false;
@@ -19,7 +21,7 @@ public:
     QMap<int, QList<int>> allowedPokemon;
 
 
-    void randomize();
+    void randomize(QRandomGenerator* r);
 
 };
 

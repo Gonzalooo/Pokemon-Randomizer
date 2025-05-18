@@ -226,3 +226,5 @@ unix:!macx {
 
 # Additional build configurations
 DEFINES += QT_DEPRECATED_WARNINGS
+
+message($$system($$QMAKE_CXX --version))

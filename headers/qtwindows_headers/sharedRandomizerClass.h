@@ -26,6 +26,8 @@
 #include <QMessageBox>
 #include <QCoreApplication>
 #include <QApplication>
+#include <QDateTime>
+#include <QUuid>
 
 using json = nlohmann::json;
 
@@ -54,7 +56,7 @@ using json = nlohmann::json;
 class sharedRandomizerClass{
     public:
         // Global Structs
-        QRandomGenerator randNum;
+
         struct allowedPokemonLimiter{
             QList<bool> gens = {true, true, true,
                                 true, true, true,

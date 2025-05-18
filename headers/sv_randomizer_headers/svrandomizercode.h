@@ -27,6 +27,7 @@ public:
     bool kaizo_mode = false;       // Added
     unsigned int bulk_amount = 1;
     QString seed = "";
+    QRandomGenerator randNum;
 
     svStarters svRandomizerStarters;
     svPersonal svRandomizerPersonal;

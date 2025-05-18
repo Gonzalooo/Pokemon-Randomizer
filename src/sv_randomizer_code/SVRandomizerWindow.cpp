@@ -156,7 +156,8 @@ void SVRandomizerWindow::runRandomizer(){
     quint64 seed;
 
     if(randomizer.seed.isEmpty()){
-        seed = static_cast<quint64>(QDateTime::currentMSecsSinceEpoch());
+        auto now_ns = std::chrono::steady_clock::now().time_since_epoch().count();
+        seed = static_cast<quint64>(now_ns);
     }else{
         QByteArray seedArray = randomizer.seed.toUtf8();
         QByteArray hash = QCryptographicHash::hash(seedArray, QCryptographicHash::Sha256);
@@ -165,10 +166,12 @@ void SVRandomizerWindow::runRandomizer(){
 
     quint32 seed_low = static_cast<quint32>(seed & 0xFFFFFFFF);
     quint32 seed_high = static_cast<quint32>(seed >> 32);
-
-    // Initialize with a sequence of 32-bit values
     std::seed_seq seq{ seed_low, seed_high };
-    randNum = QRandomGenerator(seq);
+
+    qDebug()<<seed;
+    qDebug()<<seed_low;
+    qDebug()<<seed_high;
+    randomizer.randNum = QRandomGenerator(seq);
 
     QString outputFolderName = "Randomizers-Output";
     QString outputFolderPath = QDir::current().filePath(outputFolderName);
@@ -197,7 +200,7 @@ void SVRandomizerWindow::runRandomizer(){
         if(randomizer.svRandomizerStarters.randomizeStarters == true ||
             randomizer.svRandomizerStarters.randomizeGifts == true){
 
-            randomizer.svRandomizerStarters.randomize();
+            randomizer.svRandomizerStarters.randomize(&randomizer.randNum);
         }
 
         if(randomizer.svRandomizerPersonal.randomizeAbilities == true||
@@ -207,21 +210,144 @@ void SVRandomizerWindow::runRandomizer(){
             randomizer.svRandomizerPersonal.randomizeTypes == true ||
             randomizer.svRandomizerPersonal.randomizeTMs == true){
 
-            randomizer.svRandomizerPersonal.randomize();
+            randomizer.svRandomizerPersonal.randomize(&randomizer.randNum);
         }
 
         if(randomizer.svRandomizerItems.randomizeItems == true){
-            randomizer.svRandomizerItems.randomize();
+            randomizer.svRandomizerItems.randomize(&randomizer.randNum);
         }
 
         if(randomizer.svRandomizerFixed.randomizeFixedEncounters == true){
-            randomizer.svRandomizerFixed.randomize();
+            randomizer.svRandomizerFixed.randomize(&randomizer.randNum);
         }
 
         if(randomizer.svRandomizerWilds.randomizePaldeaWild == true ||
             randomizer.svRandomizerWilds.randomizeKitakamiWild == true ||
             randomizer.svRandomizerWilds.randomizeBlueberryWild == true){
-            randomizer.svRandomizerWilds.randomize();
+            randomizer.svRandomizerWilds.randomize(&randomizer.randNum);
+        }
+
+        if(randomizer.svRandomizerRaids.randomizePaldea == true){
+            QStringList paths = {
+                "SV_RAIDS/raid_enemy_01_array.json",
+                "SV_RAIDS/raid_enemy_02_array.json",
+                "SV_RAIDS/raid_enemy_03_array.json",
+                "SV_RAIDS/raid_enemy_04_array.json",
+                "SV_RAIDS/raid_enemy_05_array.json",
+                "SV_RAIDS/raid_enemy_06_array.json",
+            };
+
+            QStringList cleans = {
+                "SV_RAIDS/raid_enemy_01_array_clean.json",
+                "SV_RAIDS/raid_enemy_02_array_clean.json",
+                "SV_RAIDS/raid_enemy_03_array_clean.json",
+                "SV_RAIDS/raid_enemy_04_array_clean.json",
+                "SV_RAIDS/raid_enemy_05_array_clean.json",
+                "SV_RAIDS/raid_enemy_06_array_clean.json",
+            };
+
+            QStringList folder = {
+                "world/data/raid/raid_enemy_01/",
+                "world/data/raid/raid_enemy_02/",
+                "world/data/raid/raid_enemy_03/",
+                "world/data/raid/raid_enemy_04/",
+                "world/data/raid/raid_enemy_05/",
+                "world/data/raid/raid_enemy_06/",
+            };
+
+            QStringList schemas = {
+                "SV_RAIDS/raid_enemy_01_array.bfbs",
+                "SV_RAIDS/raid_enemy_02_array.bfbs",
+                "SV_RAIDS/raid_enemy_03_array.bfbs",
+                "SV_RAIDS/raid_enemy_04_array.bfbs",
+                "SV_RAIDS/raid_enemy_05_array.bfbs",
+                "SV_RAIDS/raid_enemy_06_array.bfbs",
+            };
+
+            QString region = "Paldea";
+            randomizer.svRandomizerRaids.randomize(paths, cleans, schemas, folder, region, &randomizer.randNum);
+        }
+
+        if(randomizer.svRandomizerRaids.randomizeKitakami == true){
+            QStringList paths = {
+                "SV_RAIDS/su1_raid_enemy_01_array.json",
+                "SV_RAIDS/su1_raid_enemy_02_array.json",
+                "SV_RAIDS/su1_raid_enemy_03_array.json",
+                "SV_RAIDS/su1_raid_enemy_04_array.json",
+                "SV_RAIDS/su1_raid_enemy_05_array.json",
+                "SV_RAIDS/su1_raid_enemy_06_array.json",
+            };
+
+            QStringList cleans = {
+                "SV_RAIDS/su1_raid_enemy_01_array_clean.json",
+                "SV_RAIDS/su1_raid_enemy_02_array_clean.json",
+                "SV_RAIDS/su1_raid_enemy_03_array_clean.json",
+                "SV_RAIDS/su1_raid_enemy_04_array_clean.json",
+                "SV_RAIDS/su1_raid_enemy_05_array_clean.json",
+                "SV_RAIDS/su1_raid_enemy_06_array_clean.json",
+            };
+
+            QStringList folder = {
+                "world/data/raid/su1_raid_enemy_01/",
+                "world/data/raid/su1_raid_enemy_02/",
+                "world/data/raid/su1_raid_enemy_03/",
+                "world/data/raid/su1_raid_enemy_04/",
+                "world/data/raid/su1_raid_enemy_05/",
+                "world/data/raid/su1_raid_enemy_06/",
+            };
+
+            QStringList schemas = {
+                "SV_RAIDS/su1_raid_enemy_01_array.bfbs",
+                "SV_RAIDS/su1_raid_enemy_02_array.bfbs",
+                "SV_RAIDS/su1_raid_enemy_03_array.bfbs",
+                "SV_RAIDS/su1_raid_enemy_04_array.bfbs",
+                "SV_RAIDS/su1_raid_enemy_05_array.bfbs",
+                "SV_RAIDS/su1_raid_enemy_06_array.bfbs",
+            };
+
+            QString region = "Kitakami";
+            randomizer.svRandomizerRaids.randomize(paths, cleans, schemas, folder, region, &randomizer.randNum);
+        }
+
+        if(randomizer.svRandomizerRaids.randomizeBlueberry == true){
+            QStringList paths = {
+                "SV_RAIDS/su2_raid_enemy_01_array.json",
+                "SV_RAIDS/su2_raid_enemy_02_array.json",
+                "SV_RAIDS/su2_raid_enemy_03_array.json",
+                "SV_RAIDS/su2_raid_enemy_04_array.json",
+                "SV_RAIDS/su2_raid_enemy_05_array.json",
+                "SV_RAIDS/su2_raid_enemy_06_array.json",
+            };
+
+            QStringList cleans = {
+                "SV_RAIDS/su2_raid_enemy_01_array_clean.json",
+                "SV_RAIDS/su2_raid_enemy_02_array_clean.json",
+                "SV_RAIDS/su2_raid_enemy_03_array_clean.json",
+                "SV_RAIDS/su2_raid_enemy_04_array_clean.json",
+                "SV_RAIDS/su2_raid_enemy_05_array_clean.json",
+                "SV_RAIDS/su2_raid_enemy_06_array_clean.json",
+            };
+
+            QStringList folder = {
+                "world/data/raid/su2_raid_enemy_01/",
+                "world/data/raid/su2_raid_enemy_02/",
+                "world/data/raid/su2_raid_enemy_03/",
+                "world/data/raid/su2_raid_enemy_04/",
+                "world/data/raid/su2_raid_enemy_05/",
+                "world/data/raid/su2_raid_enemy_06/",
+            };
+
+            QStringList schemas = {
+                "SV_RAIDS/su2_raid_enemy_01_array.bfbs",
+                "SV_RAIDS/su2_raid_enemy_02_array.bfbs",
+                "SV_RAIDS/su2_raid_enemy_03_array.bfbs",
+                "SV_RAIDS/su2_raid_enemy_04_array.bfbs",
+                "SV_RAIDS/su2_raid_enemy_05_array.bfbs",
+                "SV_RAIDS/su2_raid_enemy_06_array.bfbs",
+            };
+
+            QString region = "Blueberry";
+            randomizer.svRandomizerRaids.randomize(paths, cleans, schemas, folder, region, &randomizer.randNum);
         }
 
         bool paldeaTrainers = false;
@@ -231,11 +357,11 @@ void SVRandomizerWindow::runRandomizer(){
         bool randomizeTrainers = randomizer.svRandomizerTrainers.checkRandomization(paldeaTrainers, kitakamiTrainers, blueberryTrainers);
 
         if(randomizeTrainers == true){
-            randomizer.svRandomizerTrainers.randomize(paldeaTrainers, kitakamiTrainers, blueberryTrainers, trainerBosses);
+            randomizer.svRandomizerTrainers.randomize(&randomizer.randNum, paldeaTrainers, kitakamiTrainers, blueberryTrainers, trainerBosses);
         }
 
         if (trainerBosses == true){
-            randomizer.svRandomizerBosses.randomizeBosses();
+            randomizer.svRandomizerBosses.randomizeBosses(&randomizer.randNum);
         }
 
         if(randomizer.auto_patch == true){

@@ -8,8 +8,10 @@ svFixed::~svFixed(){
 
 }
 
-void svFixed::randomize(){
+void svFixed::randomize(QRandomGenerator* r){
     fixedEncounters = readJsonQFile("SV_FLATBUFFERS/SV_WILDS/fixed_symbol_table_array_clean.json");
+    localRand = r;
+    setRandNum(localRand);
 
     bool sizeCheck = getAllowedPokemon(fixedEncountersPokemon, allowedPokemon, "fixedEncounters");
     if(sizeCheck == false){

@@ -12,9 +12,9 @@ void svPersonal::randomizeStats(){
     auto entries = personalMaps["entry"].get<std::vector<json>>();
     QList<int> seeds;
     for(unsigned long long i = 0; i<personalMaps["entry"].size(); i++){
-        int threadSeed = randNum.generate();
+        int threadSeed = localRand->generate();
         while(seeds.contains(threadSeed)){
-            threadSeed = randNum.generate();
+            threadSeed = localRand->generate();
         }
         seeds.append(threadSeed);
     }
@@ -77,9 +77,11 @@ void svPersonal::randomizeStats(){
     personalMaps["entry"] = entries;
 }
 
-void svPersonal::randomize(){
+void svPersonal::randomize(QRandomGenerator* r){
     personalMaps = readJsonQFile("SV_FLATBUFFERS/SV_PERSONAL/personal_array_clean.json");
     movesMaps = readJsonQFile("SV_FLATBUFFERS/SV_PERSONAL/waza_array_clean.json");
+    localRand = r;
+    setRandNum(localRand);
 
     if(banWonderGuard == true){
         bannedAbilities.append(25);
@@ -142,16 +144,16 @@ void svPersonal::randomizeTM(bool allTMs){
         if(itemMaps["values"][i]["ItemType"] == "ITEMTYPE_WAZA"){
             int selectedMove = 1;
             if(allTMs == true){
-                selectedMove = randNum.bounded(1, 920);
+                selectedMove = localRand->bounded(1, 920);
                 while(selectedTMs.contains(selectedMove) || !allowedTMMove(selectedMove)){
-                    selectedMove = randNum.bounded(1, 920);
+                    selectedMove = localRand->bounded(1, 920);
                 }
                 itemMaps["values"][i]["MachineWaza"] = sortedMoves["moves"][selectedMove]["devName"];
                 selectedTMs.append(int(sortedMoves["moves"][selectedMove]["id"]));
             }else{
-                selectedMove = randNum.bounded(0, allowedMoves.size());
+                selectedMove = localRand->bounded(0, allowedMoves.size());
                 while(selectedTMs.contains(allowedMoves[selectedMove]) || !allowedTMMove(allowedMoves[selectedMove])){
-                    selectedMove = randNum.bounded(0, allowedMoves.size());
+                    selectedMove = localRand->bounded(0, allowedMoves.size());
                 }
                 itemMaps["values"][i]["MachineWaza"] = sortedMoves["moves"][allowedMoves[selectedMove]]["devName"];
                 selectedTMs.append(int(sortedMoves["moves"][allowedMoves[selectedMove]]["id"]));

@@ -18,14 +18,14 @@ void svTrainers::noSoftlockeParadise(){
             QMap<QString, int> checkDict = {{"id", 0}, {"form", 0}};
 
             while(wonderGuardPokemon.contains(checkDict)){
-                int random = randNum.bounded(1, maxAllowedId);
+                int random = localRand->bounded(1, maxAllowedId);
 
                 while(!allowedPokemon.contains(int(pokemonMapping["pokemons"][random]["natdex"])))
-                    random = randNum.bounded(1, maxAllowedId);
+                    random = localRand->bounded(1, maxAllowedId);
 
-                int formRandom = randNum.bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
+                int formRandom = localRand->bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
                 while(pokemonMapping["pokemons"][random]["forms"][formRandom]["is_present"] == false){
-                    formRandom = randNum.bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
+                    formRandom = localRand->bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
                 }
 
                 checkDict={{"id", int(random)}, {"form",int(formRandom)}};
@@ -47,14 +47,14 @@ void svTrainers::noSoftlockeTerapagos(){
             QMap<QString, int> checkDict = {{"id", 0}, {"form", 0}};
 
             while(wonderGuardPokemon.contains(checkDict)){
-                int random = randNum.bounded(1, maxAllowedId);
+                int random = localRand->bounded(1, maxAllowedId);
 
                 while(!allowedPokemon.contains(int(pokemonMapping["pokemons"][random]["natdex"])))
-                    random = randNum.bounded(1, maxAllowedId);
+                    random = localRand->bounded(1, maxAllowedId);
 
-                int formRandom = randNum.bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
+                int formRandom = localRand->bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
                 while(pokemonMapping["pokemons"][random]["forms"][formRandom]["is_present"] == false){
-                    formRandom = randNum.bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
+                    formRandom = localRand->bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
                 }
 
                 checkDict={{"id", int(random)}, {"form",int(formRandom)}};
@@ -66,7 +66,7 @@ void svTrainers::noSoftlockeTerapagos(){
     }
 }
 
-int svTrainers::getMaxNumberOfChanges(json trainerEntry, bool NULLS){
+int svTrainers::getMaxNumberOfChanges(json trainerEntry, int& level, bool NULLS){
     int totalChanges = 0;
 
     for(int i = 1; i<=6; i++){
@@ -77,6 +77,7 @@ int svTrainers::getMaxNumberOfChanges(json trainerEntry, bool NULLS){
             }
         }else{
             if(trainerEntry[key]["devId"] != "DEV_NULL"){
+                level = int(trainerEntry[key]["level"]);
                 totalChanges++;
             }
         }
@@ -95,7 +96,7 @@ void svTrainers::randomizeTrainers(trainerSettings trainer){
 
         QFuture<void> future = QtConcurrent::map(entries, [&](json& entry){
             int index = &entry - &entries[0];
-
+            int maxLevel = 100;
             // Only randomize if its within the allowed indexes
             if(trainer.randomizedIndex.contains(index)){
                 json localMapping = pokemonMapping;
@@ -112,7 +113,7 @@ void svTrainers::randomizeTrainers(trainerSettings trainer){
                 // Sets the maximum number of pokemon to be randomized for the trainer
                 int maxChanges = 0;
                 if(trainer.extraPokemon == true){
-                    int initial = getMaxNumberOfChanges(entry);
+                    int initial = getMaxNumberOfChanges(entry, maxLevel);
 
                     if(initial !=6){
                         maxChanges = randGen.bounded(initial+1, 7);
@@ -151,7 +152,7 @@ void svTrainers::randomizeTrainers(trainerSettings trainer){
                     }
 
                 }else{
-                    maxChanges = getMaxNumberOfChanges(entry);
+                    maxChanges = getMaxNumberOfChanges(entry, maxLevel);
                 }
 
                 // Set battles to doubles or randomnly select between them (ignoring multi and raid battles)
@@ -214,7 +215,7 @@ void svTrainers::randomizeTrainers(trainerSettings trainer){
 
                     // set IVs
                     if(trainer.forcePerfectIV == true){
-                        entry[key]["talenType"] = "VALUE";
+                        entry[key]["talentType"] = "VALUE";
                         entry[key]["talentValue"]["hp"] = 31;
                         entry[key]["talentValue"]["atk"] = 31;
                         entry[key]["talentValue"]["def"] = 31;
@@ -254,7 +255,7 @@ void svTrainers::randomizeTrainers(trainerSettings trainer){
                             genderStd = "FEMALE";
                         }
                     }else{
-                        int rand_gender = randNum.bounded(0, 100);
+                        int rand_gender = localRand->bounded(0, 100);
                         if(rand_gender > int(pokemonPersonalData["entry"][int(localMapping["pokemons"][pokemon]["devid"])]["gender"]["ratio"])){
                             genderStd = "MALE";
                         }else{
@@ -266,6 +267,9 @@ void svTrainers::randomizeTrainers(trainerSettings trainer){
                     entry[key]["formId"] = form;
                     entry[key]["item"] = getPokemonItemId(pokemon, form);
                     entry[key]["sex"] = genderStd;
+                    if(int(entry[key]["level"]) == 0){
+                        entry[key]["level"] = maxLevel + randGen.bounded(1, 3);
+                    }
                     randomizeTeraType(entry[key], trainer.randomizeTeras, localMapping["pokemons"][pokemon]["devid"], form);
 
                     // Set Shinyness
@@ -295,12 +299,15 @@ void svTrainers::randomizeTrainers(trainerSettings trainer){
     }
 }
 
-void svTrainers::randomize(bool paldea, bool kitakami, bool blueberry, bool boss){
+void svTrainers::randomize(QRandomGenerator* r, bool paldea, bool kitakami, bool blueberry, bool boss){
     trainersData = readJsonQFile("SV_FLATBUFFERS/SV_TRAINERS/trdata_array_clean.json");
+    localRand = r;
+    setRandNum(localRand);
+
     for(unsigned long long i =0; i<trainersData["values"].size(); i++){
-        int threadSeed = randNum.generate();
+        int threadSeed = localRand->generate();
         while(seeds.contains(threadSeed)){
-            threadSeed = randNum.generate();
+            threadSeed = localRand->generate();
         }
         seeds.append(threadSeed);
     }

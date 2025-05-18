@@ -4,29 +4,58 @@ QList<QString> choosenBiomes = {};
 
 QString svWilds::pickRandomBiome(){
     QList<QString> possible_biomes = {"GRASS", "FOREST", "SWAMP", "LAKE", "TOWN", "MOUNTAIN", "BAMBOO", "MINE", "CAVE", "OLIVE",
-                                          "UNDERGROUND", "RIVER", "ROCKY", "BEACH", "SNOW", "OSEAN", "RUINS", "FLOWER"};
+                                          "UNDERGROUND", "RIVER", "ROCKY", "BEACH", "SNOW", "OSEAN", "RUINS", "FLOWER", "DENKI_ISHI"};
 
-    QString choice = possible_biomes[randNum.bounded(0, possible_biomes.size())];
+    QString choice = possible_biomes[localRand->bounded(0, possible_biomes.size())];
 
     while(choosenBiomes.contains(choice)){
-        choice = possible_biomes[randNum.bounded(0, possible_biomes.size())];
+        choice = possible_biomes[localRand->bounded(0, possible_biomes.size())];
     }
 
     return choice;
 }
 
 QString svWilds::generateAreaList(){
-    QString areaList = "\"";
+    QString areaList;
 
-    for(int i=0; i<10; i++){
-        int num = randNum.bounded(1, 27);
+    int maxChecks = 10;
+    if(currentRegion == "Blueberry"){
+        maxChecks = 2;
+    }
+
+    QList<int> currentAreas = {};
+
+    int num = 0;
+    for(int i=0; i<maxChecks; i++){
+        if(currentRegion == "Paldea"){
+            num = localRand->bounded(1, 28);
+        }
+
+        if(currentRegion == "Kitakami"){
+            num = localRand->bounded(1,13);
+        }else if (currentRegion == "Blueberry"){
+            num = localRand->bounded(1, 5);
+        }
+
+        while(currentAreas.contains(num)){
+            if(currentRegion == "Paldea"){
+                num = localRand->bounded(1, 28);
+            }
+            if(currentRegion == "Kitakami"){
+                num = localRand->bounded(1,13);
+            }else if (currentRegion == "Blueberry"){
+                num = localRand->bounded(1, 5);
+            }
+        }
+
+        currentAreas.append(num);
+
         areaList = areaList + QString::number(num);
         if(i != 9){
             areaList = areaList +",";
         }
     }
 
-    areaList = areaList + "\"";
     return areaList;
 }
 
@@ -81,15 +110,15 @@ void svWilds::randomizeWilds(QMap<int, QList<int>> allowedPokemon, bool ogerponT
                     {"formno", int(j)},
                     {"minlevel", 2},
                     {"maxlevel", 99},
-                    {"lotvalue", randNum.bounded(1, 51)},
+                    {"lotvalue", localRand->bounded(1, 51)},
                     {"biome1", pickRandomBiome().toStdString()},
-                    {"lotvalue1", randNum.bounded(1, 51)},
+                    {"lotvalue1", localRand->bounded(1, 51)},
                     {"biome2", pickRandomBiome().toStdString()},
-                    {"lotvalue2", randNum.bounded(1, 51)},
+                    {"lotvalue2", localRand->bounded(1, 51)},
                     {"biome3", pickRandomBiome().toStdString()},
-                    {"lotvalue3", randNum.bounded(1, 51)},
+                    {"lotvalue3", localRand->bounded(1, 51)},
                     {"biome4", pickRandomBiome().toStdString()},
-                    {"lotvalue4", randNum.bounded(1, 51)},
+                    {"lotvalue4", localRand->bounded(1, 51)},
                     {"area", generateAreaList().toStdString()},
                     {"locationName", ""},
                     {"minheight", 0},
@@ -138,15 +167,15 @@ void svWilds::randomizeWilds(QMap<int, QList<int>> allowedPokemon, bool ogerponT
         {"minlevel", 2},
         {"maxlevel", 99},
         {"lotvalue", 1+std::rand()%50},
-        {"lotvalue", randNum.bounded(1, 51)},
+        {"lotvalue", localRand->bounded(1, 51)},
         {"biome1", pickRandomBiome().toStdString()},
-        {"lotvalue1", randNum.bounded(1, 51)},
+        {"lotvalue1", localRand->bounded(1, 51)},
         {"biome2", pickRandomBiome().toStdString()},
-        {"lotvalue2", randNum.bounded(1, 51)},
+        {"lotvalue2", localRand->bounded(1, 51)},
         {"biome3", pickRandomBiome().toStdString()},
-        {"lotvalue3", randNum.bounded(1, 51)},
+        {"lotvalue3", localRand->bounded(1, 51)},
         {"biome4", pickRandomBiome().toStdString()},
-        {"lotvalue4", randNum.bounded(1, 51)},
+        {"lotvalue4", localRand->bounded(1, 51)},
         {"area", generateAreaList().toStdString()},
         {"locationName", ""},
         {"minheight", 0},
@@ -192,12 +221,17 @@ void svWilds::randomizeWilds(QMap<int, QList<int>> allowedPokemon, bool ogerponT
                        wildsGeneration, true);
 }
 
-void svWilds::randomize(){
+void svWilds::randomize(QRandomGenerator* r){
+    localRand = r;
+    setRandNum(localRand);
+
     if(randomizePaldeaWild == true){
         qDebug()<<"Randomizing Paldea Wilds";
         path = "SV_WILDS/pokedata_array.json";
         schema = "SV_WILDS/pokedata_array.bfbs";
         output = "world/data/encount/pokedata/pokedata/";
+
+        currentRegion = "Paldea";
 
         bool sizeCheck = getAllowedPokemon(paldeaWilds, usableWildPokemon, "Paldea Wilds");
         if(sizeCheck == false){
@@ -211,6 +245,9 @@ void svWilds::randomize(){
         path = "SV_WILDS/pokedata_su1_array.json";
         schema = "SV_WILDS/pokedata_su1_array.bfbs";
         output = "world/data/encount/pokedata/pokedata_su1/";
+
+        currentRegion = "Kitakami";
+
         bool sizeCheck = getAllowedPokemon(paldeaWilds, usableWildPokemon, "Kitakami Wilds");
         if(sizeCheck == false){
             qFatal()<<"Not Enough usable Pokemon for Kitakami Wilds";
@@ -221,6 +258,9 @@ void svWilds::randomize(){
         path = "SV_WILDS/pokedata_su2_array.json";
         schema = "SV_WILDS/pokedata_su2_array.bfbs";
         output = "world/data/encount/pokedata/pokedata_su2/";
+
+        currentRegion = "Blueberry";
+
         sizeCheck = getAllowedPokemon(paldeaWilds, usableWildPokemon, "Blueberry Wilds");
         if(sizeCheck == false){
             qFatal()<<"Not Enough usable Pokemon for Blueberry Wilds";
@@ -232,6 +272,9 @@ void svWilds::randomize(){
             path = "SV_WILDS/pokedata_su1_array.json";
             schema = "SV_WILDS/pokedata_su1_array.bfbs";
             output = "world/data/encount/pokedata/pokedata_su1/";
+
+            currentRegion = "Kitakami";
+
             bool sizeCheck = getAllowedPokemon(kitakamiWilds, usableWildPokemon, "Kitakami Wilds");
             if(sizeCheck == false){
                 qFatal()<<"Not Enough usable Pokemon for Kitakami Wilds";
@@ -244,6 +287,9 @@ void svWilds::randomize(){
             path = "SV_WILDS/pokedata_su2_array.json";
             schema = "SV_WILDS/pokedata_su2_array.bfbs";
             output = "world/data/encount/pokedata/pokedata_su2/";
+
+            currentRegion = "Blueberry";
+
             bool sizeCheck = getAllowedPokemon(blueberrWilds, usableWildPokemon, "Blueberry Wilds");
             if(sizeCheck == false){
                 qFatal()<<"Not Enough usable Pokemon for Blueberry Wilds";

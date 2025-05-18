@@ -13,6 +13,7 @@ class svPersonal: public QObject, SVShared{
         json personalMaps;
         json movesMaps;
         json sortedMoves;
+        QRandomGenerator* localRand;
 
         bool randomizeAbilities = false;
         bool banWonderGuard = false; // connected
@@ -63,7 +64,7 @@ class svPersonal: public QObject, SVShared{
             915, 916, 917, 918
         };
 
-        void randomize();
+        void randomize(QRandomGenerator* r);
 
     private:
         void randomizeStats();

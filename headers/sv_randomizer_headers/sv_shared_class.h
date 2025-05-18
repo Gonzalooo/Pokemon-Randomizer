@@ -32,6 +32,7 @@ public:
     ~SVShared();
     QDir qBaseDir;
     void patchFileDescriptor();
+    QRandomGenerator* localRand;
 
     QMap<QString, QStringList> nationalDexPokemonNamesAndForms = {
         {"Bulbasaur", {"—"}},
@@ -2258,7 +2259,7 @@ public:
     std::string getTeraType();
     int getTeraTypeInt(std::string teraType);
     inline void closeFileAndDelete(QString path, QString schema, QString outputFile, json& maps, bool deleteFile=true);
-
+    inline void setRandNum(QRandomGenerator* r);
     template <typename T>
     void printSceneTables(T table);
 	
@@ -2266,6 +2267,10 @@ private:
     void modifyPokemonScene(QVector<int> devId, QVector<int> formId, QVector<int> gender, QVector<bool> rare, QString input, QString output) override;
     void recursiveFindOfPokemonSceneTable(json& sceneFile, QVector<int> devId, QVector<int> formId, QVector<int> gender, QVector<bool> rare) override;
 };
+
+inline void SVShared::setRandNum(QRandomGenerator* r){
+    localRand = r;
+}
 
 inline void SVShared::closeFileAndDelete(QString path, QString schema, QString outputFile, json& maps, bool deleteFile){
     // Write the modified JSON back to the output file

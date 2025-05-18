@@ -9,17 +9,19 @@ class svBoss: public QObject, public SVShared{
     public:
         json cleanBossData;
         json trainerInfo;
+        QRandomGenerator* localRand;
 
         bool randomize_bosses = false;
         allowedPokemonLimiter BossLimiter;
         QMap<int, QList<int>> allowedPokemon;
-        void randomizeBosses();
+        void randomizeBosses(QRandomGenerator* r);
         void randomizeFight(unsigned long long index);
         void randomizeStellarOgerpon(unsigned long long index);
         void copyFight(unsigned long long indexSet, unsigned long long indexCopy);
         void copyStellarOgerpon(unsigned long long indexSet, unsigned long long indexCopy);
         void patchMultiBattle();
         void patchGimmighoul();
+        void patchGimmighoulRoaming();
         void patchLeChonk();
         void patchHoundoom();
         void patchSunflora();

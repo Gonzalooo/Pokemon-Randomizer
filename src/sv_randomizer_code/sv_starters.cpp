@@ -66,18 +66,6 @@ void svStarters::obtainSelectedStarters(int index, QString starterName, int form
         }
         qDebug()<<"Set Rare to: "<<genderStd;
 
-        // Get Shiny
-        if(shiny == true){
-            startersMaps["values"][index]["pokeData"]["rareType"] = "RARE";
-            rares.push_back(true);
-            rareId = true;
-        }else{
-            startersMaps["values"][index]["pokeData"]["rareType"] = "NO_RARE";
-            rares.push_back(false);
-            rareId = false;
-        }
-        qDebug()<<"Set Rare to: "<<rareId;
-
         // Set Tera Type - ["values"][index]["pokeData"]
         randomizeTeraType(startersMaps["values"][index]["pokeData"], randomizeStartersTeraTypes, devid, formId);
 
@@ -94,6 +82,18 @@ void svStarters::obtainSelectedStarters(int index, QString starterName, int form
         keyVal = "mizu";
     }
 
+    // Get Shiny
+    if(shiny == true){
+        startersMaps["values"][index]["pokeData"]["rareType"] = "RARE";
+        rares.push_back(true);
+        rareId = true;
+    }else{
+        startersMaps["values"][index]["pokeData"]["rareType"] = "NO_RARE";
+        rares.push_back(false);
+        rareId = false;
+    }
+    qDebug()<<"Set Rare to: "<<rareId;
+
     startersMaps["values"][index]["pokeData"]["item"] = getPokemonItemId(pokemonMapping["pokemons"][int(pokemonMapping["pokemons_devid"][devid]["natdex"])]["natdex"], formId);
     currectlySelectedStarters[keyVal]["id"] = pokemonMapping["pokemons"][int(pokemonMapping["pokemons_devid"][devid]["natdex"])]["devid"];
     currectlySelectedStarters[keyVal]["form"] = formId;
@@ -105,16 +105,18 @@ void svStarters::obtainSelectedStarters(int index, QString starterName, int form
              <<") - (Rare: "<<currectlySelectedStarters[keyVal]["rare"] << ") - (Tera: "<<currectlySelectedStarters[keyVal]["gem"] <<")";
 }
 
-void svStarters::randomize(){
+void svStarters::randomize(QRandomGenerator* r){
     startersMaps = readJsonQFile("SV_FLATBUFFERS/SV_STARTERS_FLATBUFFERS/eventAddPokemon_array_clean.json");
+    localRand = r;
+    setRandNum(localRand);
 
     if(randomizeStarters == true){
         if(allStartersShiny == true){
             startersShiny[0] = true;
             startersShiny[1] = true;
             startersShiny[2] = true;
-        }if(forceShinyStarter == true){
-            int force = randNum.bounded(0, 3);
+        }else if(forceShinyStarter == true){
+            int force = localRand->bounded(0, 3);
             qDebug()<<"Started Forced to be Shiny: "<<force;
             startersShiny[force] = true;
         }

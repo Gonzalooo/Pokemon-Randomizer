@@ -610,7 +610,7 @@ bool SVShared::getAllowedPokemon(allowedPokemonLimiter limiter, QMap<int, QList<
 }
 
 std::string SVShared::getTeraType(){
-    return teraTypes[randNum.bounded(0, teraTypes.length())].toUpper().toStdString();
+    return teraTypes[localRand->bounded(0, teraTypes.length())].toUpper().toStdString();
 }
 
 int SVShared::getTeraTypeInt(std::string teraType){
@@ -629,17 +629,20 @@ int SVShared::getTeraTypeInt(std::string teraType){
 
 void SVShared::randomizePokemon(QMap<int, QList<int>>& allowedPokemon, int& devid, int& form, int& gender, bool& rare, int shinyrate, json& changedFile){
     std::string genderStd;
-
-    int random = randNum.bounded(1, maxAllowedId);
+    if (!localRand) {
+        qFatal("localRand is null - randomize!");
+    }
+    qDebug()<<"Starting Randomizing Of Pokemon";
+    int random = localRand->bounded(1, maxAllowedId);
     // Checks if this is an allowed Pokemon
     while(!allowedPokemon.contains(pokemonMapping["pokemons"][random]["natdex"]))
-        random = randNum.bounded(1, maxAllowedId);
+        random = localRand->bounded(1, maxAllowedId);
     qDebug()<<"Selected Random Id: "<<std::string(pokemonMapping["pokemons"][random]["name"]) << "("<<random<<")";
 
     // Checks if its an allowed pokemon form
-    int formRandom = randNum.bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
+    int formRandom = localRand->bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
     while(!allowedPokemon[random].contains(formRandom)){
-        formRandom = randNum.bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
+        formRandom = localRand->bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
     }
     qDebug()<<"Selected Form: "<< form;
 
@@ -674,7 +677,7 @@ void SVShared::randomizePokemon(QMap<int, QList<int>>& allowedPokemon, int& devi
             genderStd = "FEMALE";
         }
     }else{
-        int rand_gender = randNum.bounded(0, 100);
+        int rand_gender = localRand->bounded(0, 100);
         if(rand_gender > int(pokemonPersonalData["entry"][int(pokemonMapping["pokemons"][random]["devid"])]["gender"]["ratio"])){
             gender = 0;
             genderStd = "MALE";
@@ -688,7 +691,7 @@ void SVShared::randomizePokemon(QMap<int, QList<int>>& allowedPokemon, int& devi
 
     //Shiny Pokemon Randomizing
     if(changedFile["rareType"] != "RARE"){
-        int chance = randNum.bounded(0, 100);
+        int chance = localRand->bounded(0, 100);
         if(chance < shinyrate){
             changedFile["rareType"] = "RARE";
             rare = true;

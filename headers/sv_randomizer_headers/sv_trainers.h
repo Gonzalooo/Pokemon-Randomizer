@@ -13,11 +13,12 @@ class svTrainers: public QObject, public SVShared{
         bool checkRandomization(bool& paldea, bool& kita, bool& blueberry);
         void noSoftlockeParadise();
         void noSoftlockeTerapagos();
-        int getMaxNumberOfChanges(json trainerEntry, bool NULLS=false);
+        int getMaxNumberOfChanges(json trainerEntry, int& level, bool NULLS=false);
         void randomizeTrainers(trainerSettings trainer);
-        void randomize(bool paldea, bool kitakami, bool blueberry, bool boss = false);
+        void randomize(QRandomGenerator* r, bool paldea, bool kitakami, bool blueberry, bool boss = false);
 
         bool paldeaForAll = false;
+        QRandomGenerator* localRand;
 
         trainerSettings allTrainers;
         trainerSettings rivalTrainers;

@@ -29,7 +29,8 @@ class svRaids: public QObject, public SVShared{
 
         QMap<int, QList<int>> allowedPokemon;
 
-        void randomize(QStringList paths, QStringList schema, QStringList folder, QString region);
+        void randomize(QStringList paths, QStringList clean, QStringList schema, QStringList folder, QString region,
+            QRandomGenerator* r);
 };
 
 #endif // SV_RAIDS_H

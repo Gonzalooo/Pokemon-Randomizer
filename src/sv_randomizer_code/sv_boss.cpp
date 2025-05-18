@@ -41,13 +41,13 @@ void svBoss::savePokemonFromTrainer(int index, QString& pokeKey, QVector<int> &d
 }
 
 void svBoss::obtainPokemonScene(int &dev, int &form, int& gender, int &rare){
-    dev = randNum.bounded(1, maxAllowedId);
+    dev = localRand->bounded(1, maxAllowedId);
     while(!allowedPokemon.contains(pokemonMapping["pokemons"][dev]["natdex"]))
-        dev = randNum.bounded(1, maxAllowedId);
+        dev = localRand->bounded(1, maxAllowedId);
 
-    form = randNum.bounded(0, static_cast<int>(pokemonMapping["pokemons"][dev]["forms"].size()));
+    form = localRand->bounded(0, static_cast<int>(pokemonMapping["pokemons"][dev]["forms"].size()));
     while(!allowedPokemon[dev].contains(form)){
-        form = randNum.bounded(0, static_cast<int>(pokemonMapping["pokemons"][dev]["forms"].size()));
+        form = localRand->bounded(0, static_cast<int>(pokemonMapping["pokemons"][dev]["forms"].size()));
     }
 
     QString form_Check = QString::fromUtf8(pokemonMapping["pokemons"][dev]["name"].get<std::string>().c_str());
@@ -66,7 +66,7 @@ void svBoss::obtainPokemonScene(int &dev, int &form, int& gender, int &rare){
             gender = 1;
         }
     }else{
-        int rand_gender = randNum.bounded(1, 101);
+        int rand_gender = localRand->bounded(1, 101);
         if(rand_gender > int(pokemonPersonalData["entry"][int(pokemonMapping["pokemons"][dev]["devid"])]["gender"]["ratio"])){
             gender = 0;
         }else{
@@ -74,7 +74,7 @@ void svBoss::obtainPokemonScene(int &dev, int &form, int& gender, int &rare){
         }
     }
 
-    int val = randNum.bounded(1,100); // range is [1, shiny_starter_rate)
+    int val = localRand->bounded(1,100); // range is [1, shiny_starter_rate)
     if(val == 1){
         rare = 1;
     }
@@ -213,7 +213,7 @@ void svBoss::patchMultiBattle(){
 
 }
 
-void svBoss::patchGimmighoul(){
+void svBoss::patchGimmighoulRoaming(){
     QVector<int> devIdBoss;
     QVector<int> formIdBoss;
     QVector<int> genderBoss;
@@ -233,12 +233,26 @@ void svBoss::patchGimmighoul(){
     patchScenes(files, outputs, devIdBoss, formIdBoss, genderBoss, rareBoss);
 
     files.clear();
+    devIdBoss.clear();
+    formIdBoss.clear();
+    genderBoss.clear();
+    rareBoss.clear();
 
-    files = {
-        {qBaseDir.filePath("SV_SCENES/trsot.fbs"), qBaseDir.filePath("SV_SCENES/MISC/Gimmighoul/coin_symbol_box")},
-    };
+}
 
-    outputs = {
+void svBoss::patchGimmighoul(){
+    QVector<int> devIdBoss;
+    QVector<int> formIdBoss;
+    QVector<int> genderBoss;
+    QVector<bool> rareBoss;
+    // Gimmighoul - 11
+    saveIndividualPokemon(11, devIdBoss, formIdBoss, genderBoss, rareBoss);
+
+    QList<QPair<QString, QString>> files = {
+             {qBaseDir.filePath("SV_SCENES/trsot.fbs"), qBaseDir.filePath("SV_SCENES/MISC/Gimmighoul/coin_symbol_box")},
+             };
+
+    QList<QString> outputs = {
         "world/obj_template/parts/coin_symbol/coin_symbol_box_/",
     };
 
@@ -248,7 +262,6 @@ void svBoss::patchGimmighoul(){
     formIdBoss.clear();
     genderBoss.clear();
     rareBoss.clear();
-
 }
 
 void svBoss::patchLeChonk(){
@@ -849,16 +862,16 @@ void svBoss::copyFight(unsigned long long indexSet, unsigned long long indexCopy
 
 void svBoss::randomizeFight(unsigned long long index){
     if(index == 31 || index == 32 ||cleanBossData["values"][index]["label"] == "SDC02_0310_kodaikame" || cleanBossData["values"][index]["label"] == "SDC02_0330_kodaikame"){
-        int random = randNum.bounded(1, maxAllowedId);
+        int random = localRand->bounded(1, maxAllowedId);
         while(!allowedPokemon.contains(pokemonMapping["pokemons"][random]["natdex"]))
-            random = randNum.bounded(1, maxAllowedId);;
+            random = localRand->bounded(1, maxAllowedId);;
 
         int formRandom = 0;
 
         if(random != 1017){
-            formRandom = randNum.bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
+            formRandom = localRand->bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
             while(!allowedPokemon[random].contains(formRandom)){
-                formRandom = randNum.bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
+                formRandom = localRand->bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
             }
 
             cleanBossData["values"][index]["pokeData"]["devId"] = pokemonMapping["pokemons"][random]["devName"];
@@ -891,7 +904,7 @@ void svBoss::randomizeFight(unsigned long long index){
                 genderStd = "FEMALE";
             }
         }else{
-            int rand_gender = randNum.bounded(1, 101);
+            int rand_gender = localRand->bounded(1, 101);
             if(rand_gender > int(pokemonPersonalData["entry"][int(pokemonMapping["pokemons"][random]["devid"])]["gender"]["ratio"])){
                 genderStd = "MALE";
             }else{
@@ -901,7 +914,7 @@ void svBoss::randomizeFight(unsigned long long index){
         }
 
         cleanBossData["values"][index]["pokeData"]["sex"] = genderStd.toStdString();
-        int val = randNum.bounded(1,100); // range is [1, shiny_starter_rate)
+        int val = localRand->bounded(1,100); // range is [1, shiny_starter_rate)
         if(val == 1){
             cleanBossData["values"][index]["pokeData"]["rareType"] = "RARE";
         }
@@ -929,13 +942,13 @@ void svBoss::randomizeFight(unsigned long long index){
         }
     }
     else{
-        int random = randNum.bounded(1, maxAllowedId);
+        int random = localRand->bounded(1, maxAllowedId);
         while(!allowedPokemon.contains(pokemonMapping["pokemons"][random]["natdex"]))
-            random =randNum.bounded(1, maxAllowedId);
+            random =localRand->bounded(1, maxAllowedId);
 
-        int formRandom = randNum.bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
+        int formRandom = localRand->bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
         while(!allowedPokemon[random].contains(formRandom)){
-            formRandom = randNum.bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
+            formRandom = localRand->bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
         }
 
         cleanBossData["values"][index]["pokeData"]["devId"] = pokemonMapping["pokemons"][random]["devName"];
@@ -996,13 +1009,13 @@ void svBoss::randomizeFight(unsigned long long index){
 }
 
 void svBoss::randomizeStellarOgerpon(unsigned long long index){
-    int random = randNum.bounded(1, maxAllowedId);
+    int random = localRand->bounded(1, maxAllowedId);
     while(!allowedPokemon.contains(pokemonMapping["pokemons"][random]["natdex"]))
-        random = randNum.bounded(1, maxAllowedId);
+        random = localRand->bounded(1, maxAllowedId);
 
-    int formRandom = randNum.bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
+    int formRandom = localRand->bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
     while(!allowedPokemon[random].contains(formRandom)){
-        formRandom = randNum.bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
+        formRandom = localRand->bounded(0, static_cast<int>(pokemonMapping["pokemons"][random]["forms"].size()));
     }
 
     cleanBossData["values"][index]["pokeData"]["devId"] = pokemonMapping["pokemons"][random]["devName"];
@@ -1031,7 +1044,7 @@ void svBoss::randomizeStellarOgerpon(unsigned long long index){
             genderStd = "FEMALE";
         }
     }else{
-        int rand_gender = randNum.bounded(1, 101);
+        int rand_gender = localRand->bounded(1, 101);
         if(rand_gender > int(pokemonPersonalData["entry"][int(pokemonMapping["pokemons"][random]["devid"])]["gender"]["ratio"])){
             genderStd = "MALE";
         }else{
@@ -1041,7 +1054,7 @@ void svBoss::randomizeStellarOgerpon(unsigned long long index){
     }
 
     cleanBossData["values"][index]["pokeData"]["sex"] = genderStd.toStdString();
-    int val = randNum.bounded(1,100); // range is [1, shiny_starter_rate)
+    int val = localRand->bounded(1,100); // range is [1, shiny_starter_rate)
     if(val == 1){
         cleanBossData["values"][index]["pokeData"]["rareType"] = "RARE";
     }
@@ -1606,7 +1619,9 @@ void svBoss::patchSnacksworths(){
     }
 }
 
-void svBoss::randomizeBosses(){
+void svBoss::randomizeBosses(QRandomGenerator* r){
+    localRand = r;
+    setRandNum(localRand);
     qDebug()<<"Starting Boss Randomizer";
     cleanBossData = readJsonQFile("SV_FLATBUFFERS/SV_SCENES/eventBattlePokemon_array_clean.json");
     QDir check;

@@ -9,7 +9,11 @@ svRaids::~svRaids(){
 
 }
 
-void svRaids::randomize(QStringList paths, QStringList schema, QStringList folder, QString region){
+void svRaids::randomize(QStringList paths, QStringList clean, QStringList schema, QStringList folder, QString region,
+                        QRandomGenerator* r){
+
+    localRand = r;
+    setRandNum(localRand);
     allowedPokemonLimiter raidPokemon;
     int rate = 10;
     int forceShiny = false;
@@ -34,8 +38,8 @@ void svRaids::randomize(QStringList paths, QStringList schema, QStringList folde
         qFatal()<<QString("Not Enough usable Pokemon for %1 Raids").arg(region);
     }
 
-    for(unsigned int i =0; i<paths.size(); i++){
-        json raids = readJsonQFile(paths[i]);
+    for(unsigned int i =0; i<clean.size(); i++){
+        json raids = readJsonQFile("SV_FLATBUFFERS/"+clean[i]);
 
         json newRaids;
         newRaids["values"] = json::array();

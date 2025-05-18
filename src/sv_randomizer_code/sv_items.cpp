@@ -8,11 +8,12 @@ svItems::~svItems(){
 
 }
 
-void svItems::randomize(){
+void svItems::randomize(QRandomGenerator* r){
     pokemonDrops = readJsonQFile("SV_FLATBUFFERS/SV_ITEMS/dropitemdata_array_clean.json");
     letsGoItems = readJsonQFile("SV_FLATBUFFERS/SV_ITEMS/rummagingItemDataTable_array_clean.json");
     pickUpItems = readJsonQFile("SV_FLATBUFFERS/SV_ITEMS/monohiroiItemData_array_clean.json");
-
+    localRand = r;
+    setRandNum(localRand);
 
     if(randomizeHiddenItems == true){
         QList<QPair<QString, QString>> filesJson = {
@@ -39,8 +40,8 @@ void svItems::randomize(){
                     std::string itemName = itemDevs["items"][itemChoice]["devName"];
                     std::string itemKey = "item_" + std::to_string(j);
                     hiddenItems["values"][i][itemKey]["itemId"] = itemName;
-                    hiddenItems["values"][i][itemKey]["emergePercent"] = randNum.bounded(100, 901);
-                    hiddenItems["values"][i][itemKey]["dropCount"] = randNum.bounded(1, 21);
+                    hiddenItems["values"][i][itemKey]["emergePercent"] = localRand->bounded(100, 901);
+                    hiddenItems["values"][i][itemKey]["dropCount"] = localRand->bounded(1, 21);
                 }
             }
 
@@ -88,7 +89,7 @@ void svItems::randomize(){
 
         closeFileAndDelete("SV_ITEMS/monohiroiItemData_array.json",
                            "SV_ITEMS/monohiroiItemData_array.bfbs",
-                           "world/data/item/monohiroilItemData/",
+                           "world/data/item/monohiroiItemData/",
                            pickUpItems, true);
     }
 
@@ -122,13 +123,13 @@ void svItems::randomize(){
 }
 
 int svItems::selectItem(){
-    int itemChoice = randNum.bounded(1, 1091);
+    int itemChoice = localRand->bounded(1, 1091);
     while(itemDevs["items"][itemChoice]["ItemType"] == "ITEMTYPE_MATERIAL" ||
            itemDevs["items"][itemChoice]["ItemType"] == "ITEMTYPE_EVENT" ||
            itemDevs["items"][itemChoice]["ItemType"] == "ITEMTYPE_BATTLE" ||
            itemDevs["items"][itemChoice]["ItemType"] == "ITEMTYPE_POCKET" ||
            bannedItems.contains(itemDevs["items"][itemChoice]["id"])){
-        itemChoice = randNum.bounded(1, 1091);
+        itemChoice = localRand->bounded(1, 1091);
     }
 
     return itemChoice;

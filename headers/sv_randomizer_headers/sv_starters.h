@@ -10,6 +10,7 @@ public:
     ~svStarters();
 
     json startersMaps;
+    QRandomGenerator* localRand;
 
     allowedPokemonLimiter startersPokemon; // connected
     QMap<int, QList<int>> usableStarterPokemon; // setUp
@@ -34,7 +35,7 @@ public:
     bool randomizeGiftsTeraTypes = false;
     int giftsRates = 10;
 
-    void randomize();
+    void randomize(QRandomGenerator* r);
     void obtainSelectedStarters(int index, QString starterName, int form, QString gender, bool shiny, QString ball);
 };
 

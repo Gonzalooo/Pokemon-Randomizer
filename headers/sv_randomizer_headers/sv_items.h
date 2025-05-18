@@ -15,6 +15,7 @@ class svItems: public QObject, SVShared{
         json pickUpItems;
         json hiddenItems;
         json itemDevs;
+        QRandomGenerator* localRand;
 
         bool randomizeItems = false;
         bool randomizeHiddenItems = false;
@@ -23,7 +24,7 @@ class svItems: public QObject, SVShared{
         bool randomizeLetsGoItems = false;
         bool randomizeBallItem = false;
 
-        void randomize();
+        void randomize(QRandomGenerator* r);
         int selectItem();
     private:
         // void randomizeBallItems();

@@ -7,6 +7,7 @@ class svWilds: public QObject, SVShared{
     Q_OBJECT
 
     public:
+        QRandomGenerator* localRand;
         bool ogerponTerapagosPaldea = false;
         bool ogerponTerapagosKitakami = false;
         bool ogerponTearapagosBlueberry = false;
@@ -27,8 +28,9 @@ class svWilds: public QObject, SVShared{
         allowedPokemonLimiter blueberrWilds;
 
         QMap<int, QList<int>> usableWildPokemon;
+        QString currentRegion = "";
 
-        void randomize();
+        void randomize(QRandomGenerator* r);
 
     private:
         QString path;
