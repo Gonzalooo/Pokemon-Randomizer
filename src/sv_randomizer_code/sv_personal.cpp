@@ -588,4 +588,25 @@ void svPersonal::randomizeMoves(json& pokemon, int type1, int type2, int species
             pokemon["tm_moves"] = mewTms;
         }
     }
+
+    // Fixing pokemon moves for evolutions
+    if(species == 57){
+        pokemon["reminder_moves"].push_back(889);
+    }else if(species == 190){
+        pokemon["reminder_moves"].push_back(458);
+    }else if(species == 193){
+        pokemon["reminder_moves"].push_back(246);
+    }else if(species == 203){
+        pokemon["reminder_moves"].push_back(888);
+    }else if(species == 206){
+        pokemon["reminder_moves"].push_back(887);
+    }else if(species == 211 && form == 1){
+        pokemon["reminder_moves"].push_back(839);
+    }else if(species == 221){
+        pokemon["reminder_moves"].push_back(246);
+    }else if(species == 438){
+        pokemon["reminder_moves"].push_back(102);
+    }else if(species == 762){
+        pokemon["reminder_moves"].push_back(23);
+    }
 }

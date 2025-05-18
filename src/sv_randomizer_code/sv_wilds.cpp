@@ -106,9 +106,18 @@ void svWilds::randomizeWilds(QMap<int, QList<int>> allowedPokemon, bool ogerponT
                 }
 
                 bool water = false;
+                if(pokemonSwim.contains(int(pokemonMapping["pokemons"][i]["devid"])) ||
+                    pokemonFly.contains(int(pokemonMapping["pokemons"][i]["devid"]))){
+                    if(pokemonSwim[int(pokemonMapping["pokemons"][i]["devid"])].contains(int(j)) ||
+                        pokemonFly[int(pokemonMapping["pokemons"][i]["devid"])].contains(int(j))){
+                        water = true;
+                    }
+                }
+
+                bool underwater = false;
                 if(pokemonSwim.contains(int(pokemonMapping["pokemons"][i]["devid"]))){
                     if(pokemonSwim[int(pokemonMapping["pokemons"][i]["devid"])].contains(int(j))){
-                        air = true;
+                        underwater = true;
                     }
                 }
 
@@ -116,8 +125,8 @@ void svWilds::randomizeWilds(QMap<int, QList<int>> allowedPokemon, bool ogerponT
                     {"devid", int(pokemonMapping["pokemons"][i]["devid"])},
                     {"sex", "DEFAULT"},
                     {"formno", int(j)},
-                    {"minlevel", 2},
-                    {"maxlevel", 99},
+                    {"minlevel", 1},
+                    {"maxlevel", 100},
                     {"lotvalue", localRand->bounded(1, 51)},
                     {"biome1", pickRandomBiome().toStdString()},
                     {"lotvalue1", localRand->bounded(1, 51)},
@@ -134,7 +143,7 @@ void svWilds::randomizeWilds(QMap<int, QList<int>> allowedPokemon, bool ogerponT
                     {"enabletable", {
                                         {"land", true},
                                         {"up_water", water},
-                                        {"underwater", water},
+                                        {"underwater", underwater},
                                         {"air1", air},
                                         {"air2", air}
                                     }},

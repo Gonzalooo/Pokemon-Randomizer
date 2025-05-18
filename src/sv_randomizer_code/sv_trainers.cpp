@@ -110,6 +110,10 @@ void svTrainers::randomizeTrainers(trainerSettings trainer){
                     entry["changeGem"] = true;
                 }
 
+                if(arvenTitans.contains(index)){
+                    entry["changeGem"] = false;
+                }
+
                 // Sets the maximum number of pokemon to be randomized for the trainer
                 int maxChanges = 0;
                 if(trainer.extraPokemon == true){
@@ -201,7 +205,7 @@ void svTrainers::randomizeTrainers(trainerSettings trainer){
 
                 if(entry["trid"] == "rival_01_hono" ||
                     entry["trid"] == "rival_01_kusa" ||
-                    entry["trid"] == "rival_01_mizu" || index == 711){
+                    entry["trid"] == "rival_01_mizu" || index == 711 || index == 681){
                     entry["aiDouble"] = false;
                     entry["battleType"] = "_1vs1";
                     entry["changeGem"] = false;
