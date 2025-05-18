@@ -230,10 +230,10 @@ class svTrainers: public QObject, public SVShared{
         QList<int> oNareFamily = {596, 597, 598};
 
         // DLC2 - ignore fight 711 to prevent softlock
-        QList<int> area1_dlc2 = {};
-        QList<int> area2_dlc2 = {};
-        QList<int> area3_dlc2 = {};
-        QList<int> area4_dlc2 = {};
+        QList<int> area1_dlc2 = {617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630};
+        QList<int> area2_dlc2 = {631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646};
+        QList<int> area3_dlc2 = {647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659};
+        QList<int> area4_dlc2 = {660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676};
         QList<int> schoolwars = {678, 682, 702, 706, 707, 708}; // 706/714 -> honoo, 707/715 -> kusa, 708/716 -> mizu
         QList<int> kieran = {679, 681};
         QList<int> bb4DragonTrainers = {684, 685, 686};
