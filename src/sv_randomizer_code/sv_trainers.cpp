@@ -203,6 +203,13 @@ void svTrainers::randomizeTrainers(trainerSettings trainer){
                     entry["battleType"] = "_1vs1";
                 }
 
+                if(paldeaRaids.contains(index) || kitakamiRaids.contains(index) || blueberryRaids.contains(index)
+                    || arvenTitans.contains(index)){
+                    maxChanges = 1;
+                    entry["battleType"] = "_1vs1";
+                    entry["changeGem"] = false;
+                }
+
                 if(entry["trid"] == "rival_01_hono" ||
                     entry["trid"] == "rival_01_kusa" ||
                     entry["trid"] == "rival_01_mizu" || index == 711 || index == 681){

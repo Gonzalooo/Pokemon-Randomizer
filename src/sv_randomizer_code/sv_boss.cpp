@@ -1708,6 +1708,7 @@ void svBoss::randomizeBosses(QRandomGenerator* r){
 
     qDebug()<<"Randomizing Gimmighoul";
     patchGimmighoul();
+    patchGimmighoulRoaming();
 
     qDebug()<<"Randomizing LeChonk and First Route";
     patchLeChonk();
