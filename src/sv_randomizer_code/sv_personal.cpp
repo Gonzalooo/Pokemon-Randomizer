@@ -471,6 +471,13 @@ void svPersonal::fixEvolution(json& pokemon, int species, int form){
         fixEvo(pokemon, 724, 0, 36, 32, 0, false); // Decidueye
         fixEvo(pokemon, 724, 1, 36, 33, 0, true); // Decidueye - Hisui
         break;
+    case 790: // Cosmoem
+        fixEvo(pokemon, 791, 0, 53, 32, 0, false); // Solgaleo
+        fixEvo(pokemon, 792, 0, 53, 33, 0, false); // Lunala
+        break;
+    case 933: // Finizen
+        fixEvo(pokemon, 934, 0, 38, 36, 0, false); // Palafin
+        break;
     }
 }
 

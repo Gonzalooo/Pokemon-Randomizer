@@ -563,9 +563,6 @@ bool SVShared::getAllowedPokemon(allowedPokemonLimiter limiter, QMap<int, QList<
         }
     }
 
-    allowedList = removeValuesFromQMap(allowedList, megas);
-    allowedList = removeValuesFromQMap(allowedList, UB);
-
     if(limiter.stage1 == false){
         totalRemoved++;
         allowedList = removeValuesFromQMap(allowedList, stage1);
@@ -600,6 +597,9 @@ bool SVShared::getAllowedPokemon(allowedPokemonLimiter limiter, QMap<int, QList<
     }else{
         allowedList = mergeQMaps(allowedList, paradox, bannedPokemon);
     }
+
+    allowedList = removeValuesFromQMap(allowedList, megas);
+    allowedList = removeValuesFromQMap(allowedList, UB);
 
     if(totalRemoved == 23){
         // Set up emit message for check

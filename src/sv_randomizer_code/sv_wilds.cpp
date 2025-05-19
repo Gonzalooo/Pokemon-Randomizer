@@ -79,6 +79,9 @@ void svWilds::randomizeWilds(QMap<int, QList<int>> allowedPokemon, bool ogerponT
     for(unsigned long long i=1; i< 1026; i++){
         if(allowedPokemon.contains(i)){
             for(unsigned long long j =0; j<pokemonMapping["pokemons"][i]["forms"].size(); j++){
+                if(!allowedPokemon[i].contains(j)){
+                    continue;
+                }
                 if(i == 666 || i == 665 || i==664){
                     if(j!=18){
                         continue;
@@ -98,6 +101,7 @@ void svWilds::randomizeWilds(QMap<int, QList<int>> allowedPokemon, bool ogerponT
                         }
                     }
                 }
+
                 bool air = false;
                 if(pokemonFly.contains(int(pokemonMapping["pokemons"][i]["devid"]))){
                     if(pokemonFly[int(pokemonMapping["pokemons"][i]["devid"])].contains(int(j))){
@@ -183,7 +187,7 @@ void svWilds::randomizeWilds(QMap<int, QList<int>> allowedPokemon, bool ogerponT
         {"formno", 0},
         {"minlevel", 2},
         {"maxlevel", 99},
-        {"lotvalue", 1+std::rand()%50},
+        {"lotvalue", localRand->bounded(1, 51)},
         {"lotvalue", localRand->bounded(1, 51)},
         {"biome1", pickRandomBiome().toStdString()},
         {"lotvalue1", localRand->bounded(1, 51)},
@@ -255,6 +259,7 @@ void svWilds::randomize(QRandomGenerator* r){
             qFatal()<<"Not Enough usable Pokemon for Paldea Wilds";
         }
 
+        qDebug()<<"Paldea Wilds Pokemon: "<< usableWildPokemon;
         randomizeWilds(usableWildPokemon, ogerponTerapagosPaldea);
     }
     if(paldeaForAll == true){
@@ -264,6 +269,8 @@ void svWilds::randomize(QRandomGenerator* r){
         output = "world/data/encount/pokedata/pokedata_su1/";
 
         currentRegion = "Kitakami";
+
+        usableWildPokemon.clear();
 
         bool sizeCheck = getAllowedPokemon(paldeaWilds, usableWildPokemon, "Kitakami Wilds");
         if(sizeCheck == false){
@@ -277,6 +284,7 @@ void svWilds::randomize(QRandomGenerator* r){
         output = "world/data/encount/pokedata/pokedata_su2/";
 
         currentRegion = "Blueberry";
+        usableWildPokemon.clear();
 
         sizeCheck = getAllowedPokemon(paldeaWilds, usableWildPokemon, "Blueberry Wilds");
         if(sizeCheck == false){
@@ -291,6 +299,7 @@ void svWilds::randomize(QRandomGenerator* r){
             output = "world/data/encount/pokedata/pokedata_su1/";
 
             currentRegion = "Kitakami";
+            usableWildPokemon.clear();
 
             bool sizeCheck = getAllowedPokemon(kitakamiWilds, usableWildPokemon, "Kitakami Wilds");
             if(sizeCheck == false){
@@ -306,6 +315,7 @@ void svWilds::randomize(QRandomGenerator* r){
             output = "world/data/encount/pokedata/pokedata_su2/";
 
             currentRegion = "Blueberry";
+            usableWildPokemon.clear();
 
             bool sizeCheck = getAllowedPokemon(blueberrWilds, usableWildPokemon, "Blueberry Wilds");
             if(sizeCheck == false){
