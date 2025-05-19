@@ -18,7 +18,9 @@ void svStarters::obtainSelectedStarters(int index, QString starterName, int form
         randomizePokemon(usableStarterPokemon, devid, formId, genderId, rareId, startersRates, startersMaps["values"][index]["pokeData"]);
 
         if(shiny == true){
+            startersMaps["values"][index]["pokeData"]["rareType"] = "RARE";
             rareId = true;
+            qDebug()<<"Set Rare (overwrite) to: "<<rareId;
         }
 
         devIds.push_back(devid);
@@ -64,7 +66,20 @@ void svStarters::obtainSelectedStarters(int index, QString starterName, int form
                 genderStd = "FEMALE";
             }
         }
-        qDebug()<<"Set Rare to: "<<genderStd;
+        qDebug()<<"Set Gender to: "<<genderStd;
+
+        // Get Shiny
+        if(shiny == true){
+            startersMaps["values"][index]["pokeData"]["rareType"] = "RARE";
+            rares.push_back(true);
+            rareId = true;
+        }else{
+            startersMaps["values"][index]["pokeData"]["rareType"] = "NO_RARE";
+            rares.push_back(false);
+            rareId = false;
+        }
+
+        qDebug()<<"Set Rare to: "<<rareId;
 
         // Set Tera Type - ["values"][index]["pokeData"]
         randomizeTeraType(startersMaps["values"][index]["pokeData"], randomizeStartersTeraTypes, devid, formId);
@@ -81,18 +96,6 @@ void svStarters::obtainSelectedStarters(int index, QString starterName, int form
     }else if(index == 2){
         keyVal = "mizu";
     }
-
-    // Get Shiny
-    if(shiny == true){
-        startersMaps["values"][index]["pokeData"]["rareType"] = "RARE";
-        rares.push_back(true);
-        rareId = true;
-    }else{
-        startersMaps["values"][index]["pokeData"]["rareType"] = "NO_RARE";
-        rares.push_back(false);
-        rareId = false;
-    }
-    qDebug()<<"Set Rare to: "<<rareId;
 
     startersMaps["values"][index]["pokeData"]["item"] = getPokemonItemId(pokemonMapping["pokemons"][int(pokemonMapping["pokemons_devid"][devid]["natdex"])]["natdex"], formId);
     currectlySelectedStarters[keyVal]["id"] = pokemonMapping["pokemons"][int(pokemonMapping["pokemons_devid"][devid]["natdex"])]["devid"];

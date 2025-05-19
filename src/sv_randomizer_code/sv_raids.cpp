@@ -64,7 +64,7 @@ void svRaids::randomize(QStringList paths, QStringList clean, QStringList schema
             bool rare = false;
             bool check_loop = true;
             do{
-                randomizePokemon(allowedPokemon, random, form, gender, rare, rate, raids["values"][i]["raidEnemyInfo"]["bossPokePara"]);
+                randomizePokemon(allowedPokemon, random, form, gender, rare, rate, raids["values"][j]["raidEnemyInfo"]["bossPokePara"]);
                 checkDict = {{"id", int(random)}, {"form", int(form)}};
                 if(!usedForms.contains(checkDict)){
                     if(!exitAbilitiesPokemon.contains(checkDict)){
@@ -114,12 +114,7 @@ void svRaids::randomize(QStringList paths, QStringList clean, QStringList schema
             raids["values"][j]["raidEnemyInfo"]["bossPokePara"]["waza3"]["wazaId"] = "WAZA_NULL";
             raids["values"][j]["raidEnemyInfo"]["bossPokePara"]["waza4"]["wazaId"] = "WAZA_NULL";
 
-            // Removing Timer Moves and changing with Terablast usage
-            raids["values"][j]["raidEnemyInfo"]["bossDesc"]["extraAction1"]["timming"] = "HP";
-            raids["values"][j]["raidEnemyInfo"]["bossDesc"]["extraAction1"]["action"] = "WAZA";
-            raids["values"][j]["raidEnemyInfo"]["bossDesc"]["extraAction1"]["value"] = int(85);
-
-            for(int i = 2; i<=6; i++){
+            for(int i = 1; i<=6; i++){
                 std::string key = "extraAction"+std::to_string(i);
 
                 if(raids["values"][j]["raidEnemyInfo"]["bossDesc"][key]["timming"] == "NONE"){

@@ -1209,29 +1209,20 @@ inline QMap<int, QList<int>> sharedRandomizerClass::removeValuesFromQMap(
  * Checks if the pokemon can learn the specific move
  */
 inline bool sharedRandomizerClass::allowedToLearnMove(int move, int pokemon, int form){
+    bool allowed = true;
     switch(move){
-    case 464:
-        if(pokemon != 491){
-            return false;
-        }
-        break;
-    case 621:
-        if(pokemon == 720){
-            if(form !=1){
-                return false;
-            }
-        }else{
-            return false;
-        }
-        break;
-    case 783:
-        if(pokemon != 877){
-            return false;
-        }
-        break;
+        case 464:
+            allowed = (pokemon==491);
+            break;
+        case 621:
+            allowed = (pokemon == 720 & form == 1);
+            break;
+        case 783:
+            allowed = (pokemon == 877);
+            break;
     }
-
-    return true;
+    qDebug()<<"For Pokemon: "<<pokemon<<" with form: "<<form<<" move: "<<move<<" is allowed("<<allowed<<")";
+    return allowed;
 }
 
 /*
@@ -1239,12 +1230,12 @@ inline bool sharedRandomizerClass::allowedToLearnMove(int move, int pokemon, int
  */
 inline bool sharedRandomizerClass::allowedTMMove(int move){
     switch(move){
-    case 464:
-        return false;
-    case 621:
-        return false;
-    case 783:
-        return false;
+        case 464:
+            return false;
+        case 621:
+            return false;
+        case 783:
+            return false;
     }
 
     return true;
