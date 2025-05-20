@@ -15,7 +15,9 @@ void svStarters::obtainSelectedStarters(int index, QString starterName, int form
     bool rareId = false;
 
     if(!pokemonMapping["pokemons_name"].contains(starterName)){
-        randomizePokemon(usableStarterPokemon, devid, formId, genderId, rareId, startersRates, startersMaps["values"][index]["pokeData"]);
+        do{
+            randomizePokemon(usableStarterPokemon, devid, formId, genderId, rareId, startersRates, startersMaps["values"][index]["pokeData"]);
+        }while(softlockedStarters.contains(devid));
 
         if(shiny == true){
             startersMaps["values"][index]["pokeData"]["rareType"] = "RARE";

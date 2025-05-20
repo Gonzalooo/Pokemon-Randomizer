@@ -169,7 +169,7 @@ void svPersonal::randomizeTM(bool allTMs){
 
 void svPersonal::randomizeAbility(json& pokemon, int speciesCheck, int formCheck, QRandomGenerator& rng){
     // Preliminary Checks
-    if(speciesCheck == 964) { // If Palafin
+    if(speciesCheck == 964 && formCheck == 0) { // If Palafin
         int palafinAbility = rng.bounded(1, 311);
         while(bannedAbilities.contains(palafinAbility)){
             palafinAbility = rng.bounded(1, 311);
@@ -615,5 +615,11 @@ void svPersonal::randomizeMoves(json& pokemon, int type1, int type2, int species
         pokemon["reminder_moves"].push_back(102);
     }else if(species == 762){
         pokemon["reminder_moves"].push_back(23);
+    }
+
+    if(species != 1024){ // Give all pokemon access to Tera Blast
+        pokemon["reminder_moves"].push_back(851);
+    }else{
+        pokemon["reminder_moves"].push_back(906);
     }
 }

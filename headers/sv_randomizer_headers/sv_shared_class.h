@@ -2246,6 +2246,13 @@ public:
         {"mizu", {{"id", 912}, {"form", 0}, {"gender", 0}, {"rare", 0},{"gem", 0}}}
     };
 
+    QList<int> softlockedStarters = {
+        778, // mimikyu
+        845, // cramourant
+        875, // Eiscue
+        887, // Morpeko
+    };
+
     int generateBinary(const std::string& schema, const std::string& jsonFile, const std::string& path, bool debug = false);
     int generateJson(const std::string& schema, const std::string& inputFile, const std::string& path, bool debug = false);
     uint64_t fnv1a_64(const std::string& str, uint64_t basis = 0xCBF29CE484222645);
